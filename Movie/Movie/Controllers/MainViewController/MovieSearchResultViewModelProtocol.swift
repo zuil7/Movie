@@ -10,6 +10,7 @@ import Foundation
 
 protocol MovieSearchResultViewModelProtocol {
   var onRefreshSearch: VoidResult? { get set }
+  var onSelectSearchItem: SingleResult<Movie>? { get set }
 
   var currentPage: Int { get set }
   var totalResultCount: Int { get set }
@@ -17,6 +18,7 @@ protocol MovieSearchResultViewModelProtocol {
 
   var rowCount: Int { get }
 
+  func setSelectedMovie(at index: Int)
   func onKeywordType(text: String)
   func movieCellVM(at index: Int) -> MovieCellViewModelProtocol
   func searchMovies(

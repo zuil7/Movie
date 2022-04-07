@@ -25,9 +25,33 @@ extension MovieService {
     if let filter = filter {
       params = params.merging(filter.parameters) { $1 }
     }
-      
+
     consumeAPI(
       MovieResponse.self,
+      endPoint: url,
+      verb: .GET,
+      parameters: params,
+      completion: { result, error in
+        guard error == nil else {
+          return completion(nil, false, error?.localizedDescription)
+        }
+        completion(result, true, nil)
+      }
+    )
+  }
+
+  func getMovieDetails(
+    imdbId: String,
+    completion: @escaping ResultClosure<MovieDetails>
+  ) {
+    let url = movieListEP
+    let params: Parameters = [
+      "i": imdbId,
+      "plot": "full"
+    ]
+
+    consumeAPI(
+      MovieDetails.self,
       endPoint: url,
       verb: .GET,
       parameters: params,

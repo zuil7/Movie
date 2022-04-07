@@ -28,7 +28,11 @@ extension MovieController {
     super.viewDidLoad()
 
     setup()
-    bind()
+  }
+
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    setupTitle()
   }
 }
 
@@ -36,25 +40,43 @@ extension MovieController {
 
 private extension MovieController {
   func setup() {
-    setupTitle()
+    setupTiggers()
     setupSearchController()
     setupTableView()
     fetchMovie(isReset: true)
   }
 
   func setupTitle() {
-    title = "Movies"
+    navigationItem.title = S.moviesTitle()
+
+    let navigationBarAppearance = UINavigationBarAppearance()
+    navigationBarAppearance.configureWithOpaqueBackground()
+    navigationBarAppearance.backgroundColor = .black
+    navigationBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.red]
+    navigationBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+    navigationBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+
+    navigationController?.navigationBar.scrollEdgeAppearance = navigationBarAppearance
+    navigationController?.navigationBar.compactAppearance = navigationBarAppearance
+    navigationController?.navigationBar.standardAppearance = navigationBarAppearance
+  }
+
+  func setupTiggers() {
+    viewModel.onSelectMovie = trigger(type(of: self).selectedMovie)
   }
 
   func setupSearchController() {
     movieSearchResultController = R.storyboard.main.movieSearchResultController()!
     movieSearchResultController.viewModel = viewModel.movieSearchResultVM
+    movieSearchResultController.onTappedSearchItem = handleSearchItemTapped()
     let searchController = UISearchController(searchResultsController: movieSearchResultController)
+
+    searchController.searchBar.searchTextField.backgroundColor = .white
+    searchController.searchBar.searchTextField.tintColor = .black
+
     navigationItem.searchController = searchController
-    searchController.delegate = self
     searchController.searchResultsUpdater = self
     searchController.searchBar.autocapitalizationType = .none
-    searchController.searchBar.delegate = self // Monitor when the search button is tapped.
   }
 
   func setupTableView() {
@@ -70,46 +92,16 @@ private extension MovieController {
       onCompletion: handleGetMovieSuccess()
     )
   }
-
-//  func searchMovie() {
-//    viewModel.searchMovies(
-//      onCompletion: handleGetMovieSuccess()
-//    )
-//  }
-}
-
-// MARK: - Bindings
-
-private extension MovieController {
-  func bind() {
-//    searchTextField.rx.text
-//      .subscribe(onNext: handleSearchTextChange())
-//      .disposed(by: disposeBag)
-  }
 }
 
 // MARK: - Router
 
 private extension MovieController {
-//  func presentSomeController() {
-//    let vc = R.storyboard.someController.SomeController()!
-//    vc.viewModel = SomeViewModel()
-//    navigationController?.pushViewController(vc, animated: true)
-//  }
-}
-
-// MARK: - Actions
-
-private extension MovieController {
-//  @IBAction
-//  func someButtonTapped(_ sender: Any) {
-//    viewModel.someFunction2(
-//      param1: 0,
-//      param2: "",
-//      onSuccess: handleSomeSuccess(),
-//      onError: handleError()
-//    )
-//  }
+  func navigateToMovieDetails() {
+    let vc = R.storyboard.main.movieDetailsController()!
+    vc.viewModel = viewModel.movieDetailsVM
+    navigationController?.pushViewController(vc, animated: true)
+  }
 }
 
 // MARK: - Event Handlers
@@ -129,6 +121,13 @@ private extension MovieController {
       }
     }
   }
+
+  func handleSearchItemTapped() -> SingleResult<Movie> {
+    return { [weak self] movie in
+      guard let self = self else { return }
+      self.viewModel.setSelectedFromSearch(item: movie)
+    }
+  }
 }
 
 // MARK: - Helpers
@@ -136,6 +135,10 @@ private extension MovieController {
 private extension MovieController {
   func refreshTableView() {
     tableView.reloadData()
+  }
+
+  func selectedMovie() {
+    navigateToMovieDetails()
   }
 }
 
@@ -192,6 +195,7 @@ extension MovieController: UITableViewDelegate, UITableViewDataSource {
     _ tableView: UITableView,
     didSelectRowAt indexPath: IndexPath
   ) {
+    viewModel.setSelectedMovie(at: indexPath.row)
   }
 }
 
@@ -201,41 +205,5 @@ extension MovieController: UISearchResultsUpdating {
           !keyword.isEmpty
     else { return }
     movieSearchResultController.viewModel.onKeywordType(text: keyword)
-  }
-}
-
-// MARK: - UISearchBarDelegate
-
-extension MovieController: UISearchBarDelegate {
-  func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-    searchBar.resignFirstResponder()
-  }
-
-  func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
-//    updateSearchResults(for: searchController)
-  }
-}
-
-// MARK: - UISearchControllerDelegate
-
-extension MovieController: UISearchControllerDelegate {
-  func presentSearchController(_ searchController: UISearchController) {
-    // Swift.debugPrint("UISearchControllerDelegate invoked method: \(#function).")
-  }
-
-  func willPresentSearchController(_ searchController: UISearchController) {
-    // Swift.debugPrint("UISearchControllerDelegate invoked method: \(#function).")
-  }
-
-  func didPresentSearchController(_ searchController: UISearchController) {
-    // Swift.debugPrint("UISearchControllerDelegate invoked method: \(#function).")
-  }
-
-  func willDismissSearchController(_ searchController: UISearchController) {
-    // Swift.debugPrint("UISearchControllerDelegate invoked method: \(#function).")
-  }
-
-  func didDismissSearchController(_ searchController: UISearchController) {
-    // Swift.debugPrint("UISearchControllerDelegate invoked method: \(#function).")
   }
 }

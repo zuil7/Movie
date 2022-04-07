@@ -13,4 +13,9 @@ protocol MovieServiceProtocol {
     filter: MovieParameters?,
     completion: @escaping ResultClosure<MovieResponse>
   )
+
+  func getMovieDetails(
+    imdbId: String,
+    completion: @escaping ResultClosure<MovieDetails>
+  )
 }

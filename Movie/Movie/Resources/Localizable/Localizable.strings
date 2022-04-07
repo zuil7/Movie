@@ -9,3 +9,10 @@
 // MARK: - Localizable Titles
 error.title = "Error Info";
 error.generic.title = "Error Encountered.";
+movies.title = "Movies";
+item.found.title = "Items found: %@";
+year.title = "Year:";
+duration.title = "Runtime:";
+language.title = "Language:";
+plot.title = "Plot:";
+movie.details.title = "Movie Details";

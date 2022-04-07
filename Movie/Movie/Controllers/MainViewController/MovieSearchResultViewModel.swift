@@ -10,10 +10,12 @@ import Foundation
 
 class MovieSearchResultViewModel: MovieSearchResultViewModelProtocol {
   var onRefreshSearch: VoidResult?
+  var onSelectSearchItem: SingleResult<Movie>?
 
   var currentPage: Int = 1
   var totalResultCount: Int = 0
   var searchKeyword: String = ""
+  private var selectedMovie: Movie?
 
   private let service: MovieServiceProtocol
   private var movies: [Movie] = []
@@ -28,8 +30,14 @@ class MovieSearchResultViewModel: MovieSearchResultViewModelProtocol {
 // MARK: - Methods
 
 extension MovieSearchResultViewModel {
+  func setSelectedMovie(at index: Int) {
+    selectedMovie = movies[index]
+    guard let movie = selectedMovie else { return }
+    onSelectSearchItem?(movie)
+  }
+
   func onKeywordType(text: String) {
-    guard text.count > 5 else { return }
+    guard text.count > 3 else { return }
     debugPrint(text)
     searchKeyword = text
     onRefreshSearch?()

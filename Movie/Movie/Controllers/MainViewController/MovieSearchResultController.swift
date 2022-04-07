@@ -15,10 +15,9 @@ import RxSwift
 class MovieSearchResultController: UITableViewController {
   var viewModel: MovieSearchResultViewModelProtocol!
 
-  // @IBOutlet private(set) var label: UILabel!
-  // @IBOutlet private(set) var field: APTextField!
+  var onTappedSearchItem: SingleResult<Movie>?
 
-  // private(set) var fieldInputController: MDCInputControllerBase!
+  @IBOutlet private(set) var resultsLabel: UILabel!
 }
 
 // MARK: - Lifecycle
@@ -28,7 +27,6 @@ extension MovieSearchResultController {
     super.viewDidLoad()
 
     setup()
-    bind()
   }
 }
 
@@ -46,38 +44,8 @@ private extension MovieSearchResultController {
 
   func setupTiggers() {
     viewModel.onRefreshSearch = trigger(type(of: self).searchMovie)
+    viewModel.onSelectSearchItem = trigger(type(of: self).movieSelected)
   }
-}
-
-// MARK: - Bindings
-
-private extension MovieSearchResultController {
-  func bind() {
-  }
-}
-
-// MARK: - Router
-
-private extension MovieSearchResultController {
-//  func presentSomeController() {
-//    let vc = R.storyboard.someController.SomeController()!
-//    vc.viewModel = SomeViewModel()
-//    navigationController?.pushViewController(vc, animated: true)
-//  }
-}
-
-// MARK: - Actions
-
-private extension MovieSearchResultController {
-//  @IBAction
-//  func someButtonTapped(_ sender: Any) {
-//    viewModel.someFunction2(
-//      param1: 0,
-//      param2: "",
-//      onSuccess: handleSomeSuccess(),
-//      onError: handleError()
-//    )
-//  }
 }
 
 // MARK: - Event Handlers
@@ -109,7 +77,12 @@ private extension MovieSearchResultController {
   }
 
   func refreshTableView() {
+    resultsLabel.text = S.itemFoundTitle(viewModel.rowCount.description)
     tableView.reloadData()
+  }
+
+  func movieSelected(movie: Movie) {
+    onTappedSearchItem?(movie)
   }
 
   func showAlert(title: String, message: String) {
@@ -119,12 +92,6 @@ private extension MovieSearchResultController {
     present(alertController, animated: true, completion: nil)
   }
 }
-
-// MARK: - SomeControllerProtocol
-
-// extension MovieSearchResultController: SomeControllerProtocol {
-//
-// }
 
 // MARK: - UITableViewDataSource
 
@@ -166,5 +133,6 @@ extension MovieSearchResultController {
   }
 
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    viewModel.setSelectedMovie(at: indexPath.row)
   }
 }

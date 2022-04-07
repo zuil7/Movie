@@ -9,6 +9,8 @@
 import Foundation
 
 class MovieViewModel: MovieViewModelProtocol {
+  var onSelectMovie: VoidResult?
+
   var currentPage: Int = 1
   var totalResultCount: Int = 0
   var isSearching: Bool = false
@@ -17,8 +19,8 @@ class MovieViewModel: MovieViewModelProtocol {
   private let service: MovieServiceProtocol
   private var movies: [Movie] = []
   private var originalMovieList: [Movie] = []
+  private var selectedMovie: Movie?
 
-//
   init(
     service: MovieServiceProtocol = MovieService()
   ) {
@@ -29,6 +31,16 @@ class MovieViewModel: MovieViewModelProtocol {
 // MARK: - Methods
 
 extension MovieViewModel {
+  func setSelectedMovie(at index: Int) {
+    selectedMovie = movies[index]
+    onSelectMovie?()
+  }
+
+  func setSelectedFromSearch(item: Movie) {
+    selectedMovie = item
+    onSelectMovie?()
+  }
+
   func movieCellVM(at index: Int) -> MovieCellViewModelProtocol {
     MovieCellViewModel(model: movies[index])
   }
@@ -62,5 +74,12 @@ extension MovieViewModel {
 
 extension MovieViewModel {
   var rowCount: Int { movies.count }
-  var movieSearchResultVM: MovieSearchResultViewModelProtocol { MovieSearchResultViewModel() }
+  var movieSearchResultVM: MovieSearchResultViewModelProtocol {
+    MovieSearchResultViewModel()
+  }
+
+  var movieDetailsVM: MovieDetailsViewModelProtocol? {
+    guard let movie = selectedMovie else { return nil }
+    return MovieDetailsViewModel(model: movie)
+  }
 }
