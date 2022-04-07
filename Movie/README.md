@@ -12,7 +12,8 @@ You can search on movies and view the movie details
 
 1. Display list of movies with their Title and Year of release.
 2. Created a search movie list functionality.
-3. Implemented paging of movie list.
-4. When user selects a movie it will bring them to movie details.
-5. Movie details screens displays Title,Year,Image Poster,Language, Full Plot, 	
+3. Display number of results per search.
+4. Implemented paging of movie list.
+5. When user selects a movie it will bring them to movie details.
+6. Movie details screens displays Title,Year,Image Poster,Language, Full Plot, 	
    Actors and Duration of the movie.
