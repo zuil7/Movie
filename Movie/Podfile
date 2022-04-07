@@ -21,6 +21,12 @@ target 'Movie' do
   pod 'NVActivityIndicatorView/Extended'
   pod 'SwiftyUserDefaults'
   pod 'JGProgressHUD'
+  
+  # ReactiveX
+  pod 'RxSwift'
+  pod 'RxSwiftExt'
+  pod 'NSObject+Rx'
+  
 end
 
 post_install do |installer|

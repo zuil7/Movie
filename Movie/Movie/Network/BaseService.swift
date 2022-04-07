@@ -10,12 +10,13 @@ import Alamofire
 import Foundation
 import SwiftyUserDefaults
 
-final class BaseService {
+class BaseService {
   func consumeAPI<T: Decodable>(
     _ decodeType: T.Type,
     endPoint url: String,
     verb restVerb: RestVerbs,
     parameters params: Parameters? = nil,
+    encoding: ParameterEncoding = URLEncoding.queryString,
     customHeader: HTTPHeaders? = nil,
     completion: OnCompletionHandle<T>? = nil
   ) {
@@ -28,12 +29,17 @@ final class BaseService {
       httpHeader = header
     }
 
+    var finalParam: Parameters = ["apikey": apiKey]
+    if let parameters = params {
+      finalParam = finalParam.merging(parameters) { $1 }
+    }
+
     let localVerb = getVerb(type: restVerb)
     AF.request(
       url,
       method: localVerb,
-      parameters: params,
-      encoding: JSONEncoding.default,
+      parameters: finalParam,
+      encoding: encoding,
       headers: httpHeader
     ).responseJSON { response in
 

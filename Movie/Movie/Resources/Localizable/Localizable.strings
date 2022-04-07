@@ -1,0 +1,11 @@
+/* 
+  Localizable.strings
+  Movie
+
+  Created by Louise on 4/6/22.
+  Copyright © 2022 Louise Nicolas Namoc. All rights reserved.
+*/
+
+// MARK: - Localizable Titles
+error.title = "Error Info";
+error.generic.title = "Error Encountered.";

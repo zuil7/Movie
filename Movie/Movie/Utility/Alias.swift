@@ -9,6 +9,7 @@
 import Foundation
 
 // MARK: - Typealiases
+typealias S = R.string.localizable
 
 // Empty Result + Void Return
 typealias EmptyResult<ReturnType> = () -> ReturnType
@@ -31,6 +32,8 @@ typealias ErrorResult = SingleResult<Error> // (Error) -> Void
 typealias BoolResult = SingleResult<Bool> // (Bool) -> Void
 typealias Parameters = [String: Any]
 typealias OnCompletionHandle<T> = ((T?, Error?) -> Void)
+typealias ResultClosure<T> = ((T?, Bool, String?) -> Void)
+typealias APIClientResultClosure = (Bool, String?) -> Void
 
 // Optional. I think tuples with external parameter name is more readable
 typealias SingleTuple<T> = T
